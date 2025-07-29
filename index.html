@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>เกมลากออร์แกเนลล์</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #eef; }
+    h1, h2 { text-align: center; }
+    .section { margin-bottom: 50px; }
+    .game-container { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+    .images, .dropzones { display: flex; flex-direction: column; gap: 15px; }
+    .draggable { width: 100px; border: 2px solid #aaa; border-radius: 8px; background: #fff; cursor: grab; }
+    .dropzone { width: 300px; min-height: 80px; border: 2px dashed #999; padding: 10px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; text-align: center; }
+    .dropzone.dragover { background: #cfc; border-color: green; }
+    #scoreboard { font-size: 20px; font-weight: bold; margin: 20px; text-align: center; }
+    #info { margin-top: 20px; text-align: center; }
+    #video-background {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+<video autoplay muted loop id="video-background">
+    <source src="background.mp4" type="video/mp4">
+    วิดีโอไม่รองรับในเบราว์เซอร์ของคุณ
+  </video>
+
+  <h1>เกมลากออร์แกเนลล์ให้ตรงกับคำใบ้</h1>
+  <div id="scoreboard">คะแนน: <span id="score">0</span></div>
+
+  <div class="section">
+    <h2>🪤 เซลล์พืช</h2>
+    <div class="game-container">
+      <div class="images">
+        <img src="images/chloroplast.png" id="chloroplast" class="draggable" draggable="true" alt="คลอโรพลาสต์">
+        <img src="images/cell_wall.png" id="cell_wall" class="draggable" draggable="true" alt="ผนังเซลล์">
+        <img src="images/cytoplasm.png" id="cytoplasm" class="draggable" draggable="true" alt="ไซโทพลาซึม">
+        <img src="images/nucleus.png" id="nucleus" class="draggable" draggable="true" alt="นิวเคลียส">
+        <img src="images/ribosome.png" id="ribosome" class="draggable" draggable="true" alt="ไมโทคอนเดรีย">
+        <img src="images/microtubule.png" id="microtubule" class="draggable" draggable="true" alt="เยื่อหุ้มเซลล์">
+        <img src="images/vacuole.png" id="vacuole" class="draggable" draggable="true" alt="แวคิวโอล">
+      </div>
+      <div class="dropzones">
+        <div class="dropzone" data-answer="cell_wall">โครงสร้างแข็งแรงอยู่นอกสุดของเซลล์พืช</div>
+        <div class="dropzone" data-answer="chloroplast">ออร์แกเนลล์ที่มีรงควัตถุสีเขียว</div>
+        <div class="dropzone" data-answer="nucleus">ควบคุมกิจกรรมทั้งหมดของเซลล์</div>
+        <div class="dropzone" data-answer="cytoplasm">ของเหลวภายในเซลล์ที่ล้อมรอบออร์แกเนลล์</div>
+        <div class="dropzone" data-answer="vacuole">เก็บน้ำและของเสียในเซลล์พืช</div>
+        <div class="dropzone" data-answer="microtubule">เปรียบเสมือนรั้วของบ้าน ควบคุมสิ่งเข้า-ออก</div>
+        <div class="dropzone" data-answer="ribosome">โรงไฟฟ้าของเซลล์</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🐿 เซลล์สัตว์</h2>
+    <div class="game-container">
+      <div class="images">
+        <img src="images/vacuole.png" id="vacuole2" class="draggable" draggable="true" alt="แวคิวโอลขนาดเล็ก">
+        <img src="images/nucleus2.png" id="nucleus2" class="draggable" draggable="true" alt="นิวเคลียส">
+         <img src="images/mitochondria.png" id="mitochondria" class="draggable" draggable="true" alt="ไมโทคอนเดรีย">
+        <img src="images/cytoplasm.png" id="cytoplasm2" class="draggable" draggable="true" alt="ไซโทพลาซึม">
+        <img src="images/cell_membrane.png" id="cell_membrane" class="draggable" draggable="true" alt="เยื่อหุ้มเซลล์">
+      </div>
+      <div class="dropzones">
+        <div class="dropzone" data-answer="cell_membrane">เยื่อหุ้มบางควบคุมการเข้าออกของสาร</div>
+        <div class="dropzone" data-answer="mitochondria">แหล่งพลังงานของเซลล์</div>
+        <div class="dropzone" data-answer="nucleus2">ควบคุมกิจกรรมทั้งหมดของเซลล์</div>
+        <div class="dropzone" data-answer="cytoplasm2">ของเหลวที่ล้อมรอบออร์แกเนลล์</div>
+        <div class="dropzone" data-answer="vacuole2">เก็บของเสียในเซลล์สัตว์</div>
+ 
+    
+      </div>
+    </div>
+  </div>
+
+  <div id="info"></div>
+  <a href="./2.html">2</a>
+  <script>
+    let score = 0;
+    const scoreDisplay = document.getElementById('score');
+    const draggables = document.querySelectorAll('.draggable');
+    const dropzones = document.querySelectorAll('.dropzone');
+    const infoBox = document.getElementById('info');
+
+    draggables.forEach(item => {
+      item.addEventListener('dragstart', e => {
+        e.dataTransfer.setData("text/plain", e.target.id);
+      });
+    });
+
+    dropzones.forEach(zone => {
+      zone.addEventListener('dragover', e => {
+        e.preventDefault();
+        zone.classList.add('dragover');
+      });
+      zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        const draggedId = e.dataTransfer.getData("text/plain");
+        const correctAnswer = zone.dataset.answer;
+
+        if (draggedId === correctAnswer) {
+          zone.textContent = `✅ ถูกต้อง!`;
+          zone.style.backgroundColor = "#cfc";
+          score++;
+          scoreDisplay.textContent = score;
+        } else {
+          zone.textContent = `❌ ผิด! ลองใหม่`;
+          zone.style.backgroundColor = "#fcc";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
