@@ -1,26 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เกมลากออร์แกเนลล์ให้ตรงกับคำใบ้</title>
   <style>
-        body,
-    #video-background {
-      position: fixed;
-      right: 0;
-      bottom: 0;
-      min-width: 100%;
-      min-height: 100%;
-      z-index: -1;
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      height: 100%;
+      overflow: auto;
     }
-
+    .background-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      z-index: 1;
+      background-color: rgba(255, 255, 255, 0.85);
+      margin: 20px auto;
+      max-width: 900px;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    h2 { margin-top: 40px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: center;
+    }
+    .drag-item {
+      display: inline-block;
+      margin: 5px;
+      padding: 8px;
+      background-color: #e0e0e0;
+      border: 1px solid #999;
+      cursor: move;
+    }
+    .drop-zone {
+      border: 2px dashed #ccc;
+      padding: 10px;
+      margin: 10px 0;
+    }
   </style>
+</head>
 <body>
-    <video autoplay muted loop id="video-background">
-    <source src="background.mp4" type="video/mp4">
-    วิดีโอไม่รองรับในเบราว์เซอร์ของคุณ
-  </video>
+  <iframe class="background-video" src="https://www.youtube.com/embed/5USuekk16e0?autoplay=1&mute=1&loop=1&controls=0&playlist=5USuekk16e0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+  <div class="container">
+    <h1>เกมลากออร์แกเนลล์ให้ตรงกับคำใบ้</h1>
+
+    <h2>เซลล์พืช</h2>
+    <table>
+      <tr><th>ชื่อ</th><th>ลักษณะ</th><th>หน้าที่</th></tr>
+      <tr><td>นิวเคลียส</td><td>ทรงกลม อยู่กลางเซลล์</td><td>ควบคุมการทำงานของเซลล์</td></tr>
+      <tr><td>ผนังเซลล์</td><td>แข็งแรงอยู่รอบเซลล์พืช</td><td>ป้องกันและพยุงเซลล์</td></tr>
+      <tr><td>ไซโทพลาซึม</td><td>ของเหลวภายในเซลล์</td><td>เป็นที่อยู่ของออร์แกเนลล์</td></tr>
+      <tr><td>คลอโรพลาสต์</td><td>มีรงควัตถุสีเขียว</td><td>สังเคราะห์แสง</td></tr>
+      <tr><td>ไมโทคอนเดรีย</td><td>รูปร่างคล้ายเมล็ดถั่ว</td><td>ผลิตพลังงาน</td></tr>
+      <tr><td>ออร์แกเนลล์</td><td>เป็นโครงสร้างขนาดเล็กภายในเซลล์</td><td>ส่วนย่อยภายในเซลล์ เช่น ผลิตพลังงาน สร้างโปรตีน หรือสังเคราะห์แสง</td></tr>
+    </table>
+
+    <h2>เซลล์สัตว์</h2>
+    <table>
+      <tr><th>ชื่อ</th><th>ลักษณะ</th><th>หน้าที่</th></tr>
+      <tr><td>นิวเคลียส</td><td>ทรงกลม อยู่กลางเซลล์</td><td>ควบคุมการทำงานของเซลล์</td></tr>
+      <tr><td>เยื่อหุ้มเซลล์</td><td>บาง ยืดหยุ่น</td><td>ควบคุมสารเข้าออก</td></tr>
+      <tr><td>ไมโทคอนเดรีย</td><td>รูปร่างคล้ายเมล็ดถั่ว</td><td>ผลิตพลังงาน</td></tr>
+      <tr><td>แวคิวโอล</td><td>ถุงเล็กภายในเซลล์</td><td>เก็บของเสีย/น้ำ</td></tr>
+      <tr><td>ไซโทพลาซึม</td><td>ของเหลวภายในเซลล์</td><td>เป็นที่อยู่ของออร์แกเนลล์</td></tr>
+      <tr><td>ออร์แกเนลล์</td><td>เป็นโครงสร้างขนาดเล็กภายในเซลล์</td><td>ส่วนย่อยภายในเซลล์ เช่น ผลิตพลังงาน สร้างโปรตีน หรือสังเคราะห์แสง</td></tr>
+    </table>
+
+    
+
+  <script>
+    let score = 0;
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+    function drop(ev) {
+      ev.preventDefault();
+      const data = ev.dataTransfer.getData("text");
+      const dragged = document.getElementById(data);
+      ev.target.appendChild(dragged);
+      score += 1;
+      document.getElementById("score").textContent = score;
+    }
+    document.querySelectorAll('.drag-item').forEach(item => {
+      item.addEventListener('dragstart', e => {
+        e.dataTransfer.setData("text", e.target.id);
+      });
+    });
+  </script>
 </body>
 </html>
